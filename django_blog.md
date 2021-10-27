@@ -49,7 +49,7 @@ You should design your own blog system with Django framework and the support of 
 
 Django implements concept of **Model-View-Template (MVT). MVT** is slightly different from **MVC**. In fact the main difference between the two patterns is that **Django** itself takes care of the Controller part (Software Code that controls the interactions between the Model and View), leaving us with the template. The template is a HTML file mixed with **Django Template Language (DTL)**.
 
-<img src="../figures/django_logic.png" width="350" align = "center"/>
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/django_logic.png)
 
 To understand MVT, think Model as a Logical data structure. As the figure shown above, **Model** layer is the middleware and data handler between **Database** and **View** layer. The Model layer provides a definition of how the data formats when coming from the View   layer and stores in the Database and how the retrieving information from the database transfers to the View layer in the displayable format.
 

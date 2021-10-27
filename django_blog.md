@@ -84,10 +84,8 @@ In addition, by registering super administrator accounts, backend developers hav
 
 Browse all the blogs, including reading in order of view numbers(Hot blogs) and reading in order of post time(Latest blogs).
 
-<center class="half">    
-    <img src="https://github.com/leo-wkd/django_blog/blob/master/figures/home2.png" width="320" align="left"/>    
-    <img src="https://github.com/leo-wkd/django_blog/blob/master/figures/home3.png" width="320"/> 
-</center>
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/home2.png)
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/home3.png)
 
 
 
@@ -112,10 +110,8 @@ def home(请求):
 
 All the clients could use their email address and set a password to register a blog account and login via email and password.
 
-<center class="half">    
-    <img src="../figures/register.png" width="500" align="left"/>    
-    <img src="../figures/login.png" width="500"/> 
-</center>
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/register.png)
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/login.png)
 
 
 
@@ -171,12 +167,9 @@ def home(请求): #code in untitled/views.py
 
 Users could write blog in markdown language, search blog with keywords, modify their blogs and delete their blogs in user blog page.
 
-<img src="../figures/writeblog.png" width="450" align = "center"/>
-
-<img src="../figures/searchblog.png" width="450" align = "center"/>
-
-<img src="../figures/userblog.png" width="450" align = "center"/>
-
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/writeblog.png)
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/searchblog.png)
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/userblog.png)
 
 
 **Function realization method**
@@ -251,7 +244,7 @@ def deleteblog(请求):
 
 Users could click on any blogs they take interests in and read the details of those blog.
 
-<img src="../figures/blogdetail.png" width="450" align = "center"/>
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/blogdetail.png)
 
 
 
@@ -271,10 +264,8 @@ python manage.py createsuperuser
 
 and visit url: $http://127.0.0.1:8000/admin/ $  to manage all the information
 
-<center class="half">    
-    <img src="../figures/superuser1.png" width="320" align="left"/>    
-    <img src="../figures/superuser2.png" width="320"/> 
-</center>
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/superuser1.png)
+![image](https://github.com/leo-wkd/django_blog/blob/master/figures/superuser2.png)
 
 
 

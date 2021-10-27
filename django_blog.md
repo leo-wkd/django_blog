@@ -85,8 +85,8 @@ In addition, by registering super administrator accounts, backend developers hav
 Browse all the blogs, including reading in order of view numbers(Hot blogs) and reading in order of post time(Latest blogs).
 
 <center class="half">    
-    <img src="../figures/home2.png" width="320" align="left"/>    
-    <img src="../figures/home3.png" width="320"/> 
+    <img src="https://github.com/leo-wkd/django_blog/blob/master/figures/home2.png" width="320" align="left"/>    
+    <img src="https://github.com/leo-wkd/django_blog/blob/master/figures/home3.png" width="320"/> 
 </center>
 
 
@@ -113,8 +113,8 @@ def home(请求):
 All the clients could use their email address and set a password to register a blog account and login via email and password.
 
 <center class="half">    
-    <img src="../figures/register.png" width="320" align="left"/>    
-    <img src="../figures/login.png" width="320"/> 
+    <img src="../figures/register.png" width="500" align="left"/>    
+    <img src="../figures/login.png" width="500"/> 
 </center>
 
 

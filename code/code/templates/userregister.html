@@ -1,0 +1,184 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript">
+        window.onload = function(){
+            {% if t == '1' %}
+            document.getElementById('zx').className='active';
+            document.getElementById('bt').textContent='最新文章';
+                {% elif t == '2'%}
+                document.getElementById('rm').className='active';
+                document.getElementById('bt').textContent='热门文章';
+                {% else %}
+            {% endif %}
+        }
+    </script>
+     </head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#" style="color:cadetblue">博客系统</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="col-md-6">
+          <ul class="nav navbar-nav">
+        <li id="rm" ><a href="/?t=2">热门博客 <span class="sr-only">(current)</span></a></li>
+        <li id="zx"><a href="/?t=1">最新博客</a></li>
+
+      </ul>
+      </div>
+      <form class="navbar-form navbar-left" action="{% url 'blog:搜索博客' %}">
+        <div class="form-group">
+          <input type="text" name="key" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">搜索</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+            <li><a style="color: #5c8dff" href="#">{{ user.name }}</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多功能 <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'blog:发表博客' %}">发表博客</a></li>
+            <li><a onclick="showLayer('layer',300,400)">修改信息</a></li>
+            <li><a href="{% url 'user:用户博客' %}">我的博客</a></li>
+              <li><a href="{% url 'user:修改密码' %}">修改密码</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'user:登出' %}">登出</a></li>
+          </ul>
+        </li>
+            {% else %}
+            <li><a style="color: #669fa9" href="{% url 'user:登录' %}">请登录</a></li>
+          {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="row ">
+    <div class="col-md-2"></div>
+  <div class="col-md-8  container-fluid">
+             <div class="containter">
+        <div class="row">
+            <div class="col-xs-4 col-xs-offset-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">注册</h3>
+                    </div>
+                    <div class="panel-body">
+
+                       <form method="POST" action="{% url 'user:注册' %}" id="submit">
+                            {% csrf_token %}
+                           <div class="form-group">
+                            <label for="exampleInputEmail1">昵称</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder='请输入你的昵称' onfocus="cancer()">
+                          </div>
+                           <div class="form-group">
+                            <label for="exampleInputEmail1">邮箱</label>
+                            <input type="email" class="form-control"  name="username" id="email" placeholder='请输入你的用户名' onfocus="cancer()">
+                          </div>
+                           <div class="form-group">
+                            <label for="exampleInputEmail1">密码<small id="mimatishi">(请输入8位以上字符的密码，不能全为数字)</small></label>
+                            <input type="password" class="form-control"  id="password" name="password1"placeholder='请输入你的密码' onfocus="cancer2()">
+                          </div>
+                          <div class="form-group">
+                            <label for="exampleInputPassword1">确认密码</label>
+                            <input type="password" class="form-control" id="password1" name="password2"placeholder="请重复你的密码" onfocus="cancer1()">
+                          </div>
+                           <span id="tishi">
+                           {# 显示注册的提示信息 #}
+                               {% for  error in FormErrorlist%}
+                               <font color="red">{{ error}}</font><br>
+                               {% endfor %}
+                           </span>
+                          <input type="submit" id="register" class="btn btn-info center-block" value="注册"></input>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function cancer(event) {
+        document.getElementById("tishi").innerHTML="<font color='red'></font>";
+    }
+    function cancer2(event) {
+        document.getElementById("tishi").innerHTML="<font color='red'></font>";
+        document.getElementById("mimatishi").innerHTML='(请输入8位以上字符的密码，不能全为数字)';
+    }
+    function cancer1() {
+            document.getElementById("tishi").innerHTML="<font color='red'></font>";
+            var newpwd=document.getElementById('password').value;
+            var reg1 = /[a-zA-Z]/;//字母
+            var reg2 = /\d/;//数字
+            var reg3 = /_/;//下划线
+            var reg = new RegExp(/^\d{8,20}$/);{# 判定密码不能全为数字 #}
+        if(newpwd.length<8)
+        {
+            document.getElementById("mimatishi").innerHTML='(密码长度必须大于8)';
+            document.getElementById("register").disabled=true;
+        }
+        else if(newpwd.length>20)
+        {
+            document.getElementById("mimatishi").innerHTML='(密码长度太长)';
+            document.getElementById("register").disabled=true;
+        } else if(!reg.test(newpwd)){//密码格式正确的情况下
+            document.getElementById("register").disabled=false;
+			if(reg1.test(newpwd)&&reg2.test(newpwd)&&reg3.test(newpwd)){
+				//高级密码
+                document.getElementById("mimatishi").innerHTML='(密码安全度高级)';
+			}else if(reg1.test(newpwd)&&reg2.test(newpwd)){
+				//中级密码
+                document.getElementById("mimatishi").innerHTML='(密码安全度中级)';
+			}else if(reg1.test(newpwd)||reg2.test(newpwd)){
+				//低级密码
+                document.getElementById("mimatishi").innerHTML='(密码安全度低)';
+			}
+		}
+		else {
+            document.getElementById("mimatishi").innerHTML='(密码不能全为数字)';
+        }
+    }
+    $("#submit").submit(function (){
+        var email =document.getElementById("email").value;
+        var name =document.getElementById("name").value;
+        var pwd1 = document.getElementById("password").value;
+        var pwd2 = document.getElementById("password1").value;
+        if(name==""||pwd1==""||pwd2==""||email=="")
+        {
+            document.getElementById("tishi").innerHTML="<font color='red'>请输入完整信息</font>"
+            return false;
+        }
+        if(pwd1==pwd2)
+        {
+            console.log(5);
+            return true;
+        }
+        else
+        {
+            document.getElementById("tishi").innerHTML="<font color='red'>两次密码不相同</font>";
+            return false;
+        }
+    });
+    </script>
+     </div>
+  <div class="col-md-2"></div>
+</div>
+</body>
+</html>

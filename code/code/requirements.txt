@@ -1,0 +1,20 @@
+create a new virtual environment and activate it:
+$ conda create -n DjangoPath python=3.7.3
+$ conda activate DjangoPath
+
+install project dependencies:
+$ conda install Django  #install Django
+$ pip install django-notifications-hq
+$ pip install django-mdeditor   #blogs are written by markdown language, like csdn
+$ pip install markdown
+
+deploy the project:
+$ python manage.py makemigrations  #migrate databases, I use sqlite3 database
+$ python manage.py migrate
+$ python manage.py runserver 127.0.0.1:8000
+
+use the blog:
+open your favorite browser and visit the website: 127.0.0.1:8000
+enjoy the blog system!
+
+

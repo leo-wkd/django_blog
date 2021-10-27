@@ -1,0 +1,167 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7/css/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript">
+        window.onload = function(){
+            {% if t == '1' %}
+            document.getElementById('zx').className='active';
+            document.getElementById('bt').textContent='最新文章';
+                {% elif t == '2'%}
+                document.getElementById('rm').className='active';
+                document.getElementById('bt').textContent='热门文章';
+                {% else %}
+            {% endif %}
+        }
+    </script>
+    <script type="text/javascript">
+    $("#submit").submit(function () {
+        var w=document.getElementById('name').value;
+        if(w=="")
+        {
+            document.getElementById('tishi').innerHTML='<font color="red">昵称不能为空</font>'
+            return false;
+        }
+        return true;
+    });
+    function cancer() {
+        document.getElementById('name').value='{{ user.name }} ';
+        document.getElementById('publicinfo').value='{{ user.publicinfo }} ';
+        document.getElementById('layer').style.display='none';
+        document.getElementById('tishi').innerHTML='<font color="red"></font>';
+    }
+    function showLayer(id, width, height) {
+                        console.log(5);
+                    var obj  = document.getElementById(id);
+                    var winWidth = document.documentElement.clientWidth;
+                    var winHeight = document.documentElement.clientHeight;
+                    var offsetTop = document.documentElement.offsetTop;
+                    var left = (winWidth - width)/2;
+                    var top  = (winHeight - height)/2 + offsetTop;
+                    obj.style.top = top + "px";
+                    obj.style.left = left + "px";
+                    obj.style.display ="";
+                }
+    </script>
+     </head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#" style="color:cadetblue">博客系统</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="col-md-6">
+          <ul class="nav navbar-nav">
+        <li id="rm" ><a href="/?t=2">热门博客 <span class="sr-only">(current)</span></a></li>
+        <li id="zx"><a href="/?t=1">最新博客</a></li>
+
+      </ul>
+      </div>
+      <form class="navbar-form navbar-left" action="{% url 'blog:搜索博客' %}">
+        <div class="form-group">
+          <input type="text" name="key" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">搜索</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+            <li><a style="color: #5c8dff" href="#">{{ user.name }}</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多功能 <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'blog:发表博客' %}">发表博客</a></li>
+            <li><a onclick="showLayer('layer',300,400)">修改信息</a></li>
+            <li><a href="{% url 'user:用户博客' %}">我的博客</a></li>
+              <li><a href="{% url 'user:修改密码' %}">修改密码</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'user:登出' %}">登出</a></li>
+          </ul>
+        </li>
+            {% else %}
+            <li><a style="color: #669fa9" href="{% url 'user:登录' %}">请登录</a></li>
+          {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="row ">
+    <div class="col-md-2"></div>
+  <div class="col-md-8  container-fluid">
+      <!--    存放博客内容   -->
+        <div class="panel panel-default">
+                    <div  class="panel-heading"><h4 id="bt">热门文章</h4></div>
+                    <div class="panel-body">
+                        <div class="row">
+                            {% for blog in hotblog %}
+                            <div class="col-sm-6 col-md-12">
+                    <div class="">
+                      <div class="caption">
+                        <h3><a target="_blank" style="text-decoration:none;" href="{% url 'blog:博客详情' %}?blogid={{ blog.pk }}">{{ blog.title }}</a></h3>
+                        <p>{{ blog.bloginfo }}</p>
+                          <p><a href="{% url 'user:登录' %}?userid={{ blog.bloguser.pk }}&type=yc">{{ blog.bloguser.name }}</a>&nbsp;|&nbsp; {{ blog.time }}&nbsp;|&nbsp; 阅读数:{{ blog.viewnum }}&nbsp;
+                    </p>
+                      </div>
+                    </div>
+                      <HR align=center width=100% color=#987cb9 SIZE=>
+                  </div>
+                            {% endfor %}
+
+
+                </div>
+                    </div>
+                </div>
+     </div>
+  <div class="col-md-2"></div>
+</div>
+        <div class="row" id="layer" style="display:none; position: absolute;" >
+            <div class="hidden-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">修改资料</h3>
+                    </div>
+                    <div class="panel-body">
+                        {# 上传图片必须再form中添加enctype="multipart/form-data"属性 #}
+                <form action="{% url 'user:更改信息' %}" method="post" enctype="multipart/form-data" id="submit">
+              <div class="form-group">
+                <label for="exampleInputEmail1">昵称</label>
+                  {% csrf_token %}
+                <input type="text" name="name" class="form-control" id="name" value="{{ user.name|safe }}" placeholder="昵称">
+              </div>
+                    <div class="form-group">
+                <label for="exampleInputPassword1">邮箱</label>
+                <input type="text" name="username" class="form-control" readonly="true" id="exampleInputPassword1" value="{{ user.username|safe }}" placeholder="Password">
+              </div>
+                    <div class="form-group">
+                <label for="exampleInputPassword1">个性签名</label>
+                <input  type="text" name="publicinfo" class="form-control" id="publicinfo" value="{{ user.publicinfo|safe }}" placeholder="Password">
+              </div>
+              <div class="form-group">
+
+              </div>&nbsp;
+
+                    <button type="submit" class="btn btn-info">保存信息</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-default" onclick="cancer()">&nbsp;&nbsp;&nbsp;&nbsp;取消&nbsp;&nbsp;&nbsp;&nbsp;</button>
+            </form>
+                        <span id="tishi" class="text-center"></span>
+                    </div>
+                </div>
+            </div>
+     </div>
+</body>
+</html>

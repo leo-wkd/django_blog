@@ -1,0 +1,313 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>django_blog</title></head>
+<body><h2>Report</h2>
+<p>&nbsp;</p>
+<h3>Python Programming and Its Engineering Applications</h3>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><em>Contents</em></h4>
+<ul>
+<li><p><strong><em>Topic</em></strong></p>
+</li>
+<li><p><strong><em>Project Details</em></strong></p>
+<ul>
+<li>Implementation logic of Django framework</li>
+<li>Description of my Blog system</li>
+<li>Introduction of function modules</li>
+<li>How to install the Blog system</li>
+<li>Project tree</li>
+
+</ul>
+</li>
+<li><p><strong><em>References</em></strong></p>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><em>Topic</em></h4>
+<p><strong>Development of Blog system using Django framework</strong></p>
+<p>Django is a high-level Python Web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of Web development, so you can focus on writing your app without needing to reinvent the wheel. It’s free and open source.</p>
+<p>You should design your own blog system with Django framework and the support of Sqilte3 database, and deploy your system.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><em>Project Details</em></h4>
+<p>&nbsp;</p>
+<h5><em><u>Implementation logic</u></em></h5>
+<p>Django implements concept of <strong>Model-View-Template (MVT). MVT</strong> is slightly different from <strong>MVC</strong>. In fact the main difference between the two patterns is that <strong>Django</strong> itself takes care of the Controller part (Software Code that controls the interactions between the Model and View), leaving us with the template. The template is a HTML file mixed with <strong>Django Template Language (DTL)</strong>.</p>
+<p><img src="../figures/django_logic.png" width="350" align = "center"/></p>
+<p>To understand MVT, think Model as a Logical data structure. As the figure shown above, <strong>Model</strong> layer is the middleware and data handler between <strong>Database</strong> and <strong>View</strong> layer. The Model layer provides a definition of how the data formats when coming from the View   layer and stores in the Database and how the retrieving information from the database transfers to the View layer in the displayable format.</p>
+<p>Views layer receive data as well as request method (“POST”,”GET”) from client side and accordingly formats the data via model so that it can be stored in database. It also communicates to the database for retrieving data which transfer to the template for viewing.</p>
+<p>Django needs a convenient way to generate HTML dynamically. The most common approach relies on templates. A template contains the <strong>static</strong> parts of the desired HTML output as well as some special syntax describing how <strong>dynamic</strong> content will be inserted. One template can be used by different views to show various formats of data. It keeps all the content that is rendered by the browser. This part is what is visible to the client side. Model and Views layer reside on the server side.</p>
+<p>When users click a page, front end will send a URL address to the Views layer. Views layer receive data and request, store data and retrieve data from database via Model layer,  and finally transfer data to the Template layer. Static part and the inserted dynamic content of HTML template will be shown on the web page.</p>
+<div style="page-break-after:always"></div>
+<h5><em><u>My Blog system</u></em></h5>
+<p>I designed the blog system using Django framework and Sqlite3 database that comes with Python. The web page template is modified from the Bootstrap Library for new developers. </p>
+<p><strong>The basic functions of my blog system include</strong> </p>
+<ul>
+<li>User registration and login</li>
+<li>User information modification</li>
+<li>Blog posting, search, modification and deletion</li>
+<li>Read blog contents and browse all blogs.</li>
+
+</ul>
+<p>In addition, by registering super administrator accounts, backend developers have the right to manage information of all the users and blogs.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h5><em><u>Function modules</u></em></h5>
+<h6>Home page</h6>
+<p>Browse all the blogs, including reading in order of view numbers(Hot blogs) and reading in order of post time(Latest blogs).</p>
+<center class="half">    
+    <img src="../figures/home2.png" width="320" align="left">    
+    <img src="../figures/home3.png" width="320"> 
+</center>
+<p>&nbsp;</p>
+<p><strong>Function realization method</strong></p>
+<p>When users click button hot-blogs or latest-blogs, Views layer receive a data &#39;t&#39; from frontend. When t=1, Views layer retrieve data from database in order of post time and when t=2, it retrieve data in order of view numbers. Then those data will be inserted into template &quot;home.html&quot; and the web page will be displayed to clients.</p>
+<pre><code class='language-python' lang='python'>def home(请求):
+    t=请求.GET.get(&#39;t&#39;,-1)
+    hotblog = Blog.objects.order_by(&#39;-viewnum&#39;)[0:20]
+    if t == &#39;1&#39;:
+        hotblog = Blog.objects.order_by(&#39;-time&#39;)[0:20]
+    return render(请求, &#39;home.html&#39;, { &#39;hotblog&#39;: hotblog,&#39;t&#39;:t})
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h6>User registration &amp;  login</h6>
+<p>All the clients could use their email address and set a password to register a blog account and login via email and password.</p>
+<center class="half">    
+    <img src="../figures/register.png" width="320" align="left">    
+    <img src="../figures/login.png" width="320"> 
+</center>
+<p>&nbsp;</p>
+<p><strong>Function realization method</strong></p>
+<p>Use clients login module as an example. When users click login button, controller will send the url: 127.0.0.1:8000/user/login to Views layer. 127.0.0.1:8000/user is the primary address</p>
+<pre><code class='language-python' lang='python'>path(&#39;user/&#39;,include(&#39;user.urls&#39;)), #code in untitled/urls.py
+</code></pre>
+<p>  /login is the secondary address</p>
+<pre><code class='language-python' lang='python'>path(&#39;login&#39;,views.userlogin,name=&#39;登录&#39;), #code in blog/urls.py
+</code></pre>
+<p>The function <strong><em>userlogin</em></strong> in Views layer will be called and the web page &quot;login.html&quot; will be displayed</p>
+<pre><code class='language-python' lang='python'>#code in blog/views.py
+def userlogin(请求):
+    if 请求.method ==&#39;POST&#39;:
+        user=authenticate(请求,username=请求.POST[&#39;username&#39;],password=请求.POST[&#39;password&#39;])#如果有该用户则返回该用户，没有则返回空
+        if user is None:
+            return render(请求,&#39;login.html&#39;,{&#39;erro&#39;:&#39;密码错误或用户不存在！&#39;})
+        else:
+            login(请求,user)
+            return redirect(&#39;主页&#39;)
+    elif 请求.user.is_authenticated:
+        return redirect(&#39;主页&#39;)
+    else:
+        return render(请求, &#39;login.html&#39;)
+    
+</code></pre>
+<p>Then Views layer will get username and password from clients and match them in database. If users login successfully, they will see the home page.</p>
+<pre><code class='language-python' lang='python'>url(&#39;&#39;,views.home,name=&#39;主页&#39;) #code in untitled/urls.py
+
+def home(请求): #code in untitled/views.py
+    t=请求.GET.get(&#39;t&#39;,-1)
+    hotblog = Blog.objects.order_by(&#39;-viewnum&#39;)[0:20]
+    if t == &#39;1&#39;:
+        hotblog = Blog.objects.order_by(&#39;-time&#39;)[0:20]
+    return render(请求, &#39;home.html&#39;, { &#39;hotblog&#39;: hotblog,&#39;t&#39;:t})
+</code></pre>
+<p>&nbsp;</p>
+<h6>Blog posting, search, modification and deletion</h6>
+<p>Users could write blog in markdown language, search blog with keywords, modify their blogs and delete their blogs in user blog page.</p>
+<p><img src="../figures/writeblog.png" width="450" align = "center"/></p>
+<p><img src="../figures/searchblog.png" width="450" align = "center"/></p>
+<p><img src="../figures/userblog.png" width="450" align = "center"/></p>
+<p>&nbsp;</p>
+<p><strong>Function realization method</strong></p>
+<p>The package <em>django-mdeditor</em> allows developers to integrate markdown language when they write blogs. Each blog, when created,  will be assigned with a unique number called blogid. Backend will use blogid receiving from frontend to retrieve the information of blog from database. These functions are all developed based on the retrieval of blog using blogid.</p>
+<div style="page-break-after:always"></div>
+<pre><code class='language-python' lang='python'>#code in blog/views.py
+#写博客
+def writeblog(请求):
+    if(请求.user.is_authenticated==False):
+        return redirect(&#39;user:登录&#39;)
+    if(请求.method == &#39;POST&#39;):
+        #获取前端页面填写在md编译器的博客内容
+        str1=请求.POST[&#39;id_博客内容-wmd-wrapper-html-code&#39;]
+        #用来去除前端md编译器的标签
+        bloginfo=mdtotex(str1)[0:200]+&#39;......&#39;
+        blog=Blog.objects.create(bloguser=请求.user,
+                            title=请求.POST[&#39;title&#39;],
+                            bloginfo=bloginfo,
+                            blogtext=请求.POST[&#39;博客内容&#39;],
+                            viewnum=1)
+        return redirect(&#39;user:登录&#39;)
+    else:
+        #返回博客表单，用于填写博客内容
+        form=AddBlogForm()
+        return render(请求, &#39;writeblog.html&#39;,{&#39;form&#39;:form})
+#搜索博客
+def searchblog(请求):
+    keyword=请求.GET.get(&#39;key&#39;)#获取关键词
+    if(keyword==&quot;&quot;):
+        return redirect(&#39;主页&#39;)#判断关键词是否为空
+    blogall=Blog.objects.order_by(&#39;-viewnum&#39;)
+    bloglist=[]
+    for blog in blogall:
+        if(keyword in blog.title or keyword in blog.bloginfo): #查找符合条件的博客
+            bloglist.append(blog)
+    return render(请求,&#39;seachblog.html&#39;,{&#39;bloglist&#39;:bloglist,&#39;keyword&#39;:keyword})
+#修改博客
+def updateblog(请求):
+    if (请求.user.is_authenticated == False):
+        return redirect(&#39;user:登录&#39;)
+    if (请求.method == &#39;POST&#39;):
+        blogid=请求.POST[&#39;blogid&#39;]
+        blog = Blog.objects.get(pk=blogid, bloguser=请求.user)
+        str1 = 请求.POST[&#39;id_博客内容-wmd-wrapper-html-code&#39;]
+        bloginfo = mdtotex(str1)
+        blog.title=请求.POST[&#39;title&#39;]
+        blog.bloginfo=bloginfo[0:200]+&#39;......&#39;
+        blog.blogtext=请求.POST[&#39;博客内容&#39;]
+        blog.save()
+        return redirect(&#39;user:用户博客&#39;)
+    else:
+        blogid=请求.GET.get(&#39;blogid&#39;)
+        blog=Blog.objects.get(pk=blogid,bloguser=请求.user)
+        form = AddBlogForm(initial={&#39;博客内容&#39;:blog.blogtext})
+        return render(请求, &#39;updateblog.html&#39;, {&#39;form&#39;: form,&#39;blog&#39;:blog})
+#删除博客
+def deleteblog(请求):
+    if (请求.user.is_authenticated == False):
+        return redirect(&#39;user:登录&#39;)
+    blogid=请求.GET.get(&#39;blogid&#39;)
+    Blog.objects.get(pk=int(blogid),bloguser=请求.user).delete()
+    return redirect(&#39;user:用户博客&#39;)
+</code></pre>
+<div style="page-break-after:always"></div>
+<h6>Read blog contents</h6>
+<p>Users could click on any blogs they take interests in and read the details of those blog.</p>
+<p><img src="../figures/blogdetail.png" width="450" align = "center"/></p>
+<p>&nbsp;</p>
+<p><strong>Function realization method</strong></p>
+<p>When users choose a blog, controller will send the correspondent blogid to Views layer. Views layer retrieve information from database, form it in markdown format and transfer it to template detailblog.html . Then the web page will be displayed to the clients.</p>
+<p>&nbsp;</p>
+<h6>Create superusers and manage all the information</h6>
+<p>Use command below to create superusers</p>
+<pre><code class='language-shell' lang='shell'>python manage.py createsuperuser
+</code></pre>
+<p>and visit url: <span class="MathJax_SVG" tabindex="-1" style="font-size: 100%; display: inline-block;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="32.928ex" height="2.598ex" viewBox="0 -812.5 14177.1 1118.4" role="img" focusable="false" style="vertical-align: -0.711ex;"><defs><path stroke-width="0" id="E50-MJMATHI-68" d="M137 683Q138 683 209 688T282 694Q294 694 294 685Q294 674 258 534Q220 386 220 383Q220 381 227 388Q288 442 357 442Q411 442 444 415T478 336Q478 285 440 178T402 50Q403 36 407 31T422 26Q450 26 474 56T513 138Q516 149 519 151T535 153Q555 153 555 145Q555 144 551 130Q535 71 500 33Q466 -10 419 -10H414Q367 -10 346 17T325 74Q325 90 361 192T398 345Q398 404 354 404H349Q266 404 205 306L198 293L164 158Q132 28 127 16Q114 -11 83 -11Q69 -11 59 -2T48 16Q48 30 121 320L195 616Q195 629 188 632T149 637H128Q122 643 122 645T124 664Q129 683 137 683Z"></path><path stroke-width="0" id="E50-MJMATHI-74" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path stroke-width="0" id="E50-MJMATHI-70" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path stroke-width="0" id="E50-MJMAIN-3A" d="M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path stroke-width="0" id="E50-MJMAIN-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path stroke-width="0" id="E50-MJMAIN-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path stroke-width="0" id="E50-MJMAIN-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path stroke-width="0" id="E50-MJMAIN-37" d="M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z"></path><path stroke-width="0" id="E50-MJMAIN-2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path stroke-width="0" id="E50-MJMAIN-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path stroke-width="0" id="E50-MJMAIN-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path><path stroke-width="0" id="E50-MJMATHI-61" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path><path stroke-width="0" id="E50-MJMATHI-64" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path stroke-width="0" id="E50-MJMATHI-6D" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path stroke-width="0" id="E50-MJMATHI-69" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path stroke-width="0" id="E50-MJMATHI-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E50-MJMATHI-68" x="0" y="0"></use><use xlink:href="#E50-MJMATHI-74" x="576" y="0"></use><use xlink:href="#E50-MJMATHI-74" x="937" y="0"></use><use xlink:href="#E50-MJMATHI-70" x="1298" y="0"></use><use xlink:href="#E50-MJMAIN-3A" x="2078" y="0"></use><use xlink:href="#E50-MJMAIN-2F" x="2634" y="0"></use><use xlink:href="#E50-MJMAIN-2F" x="3134" y="0"></use><g transform="translate(3634,0)"><use xlink:href="#E50-MJMAIN-31"></use><use xlink:href="#E50-MJMAIN-32" x="500" y="0"></use><use xlink:href="#E50-MJMAIN-37" x="1000" y="0"></use><use xlink:href="#E50-MJMAIN-2E" x="1500" y="0"></use><use xlink:href="#E50-MJMAIN-30" x="1778" y="0"></use><use xlink:href="#E50-MJMAIN-2E" x="2278" y="0"></use><use xlink:href="#E50-MJMAIN-30" x="2556" y="0"></use><use xlink:href="#E50-MJMAIN-2E" x="3056" y="0"></use><use xlink:href="#E50-MJMAIN-31" x="3334" y="0"></use></g><use xlink:href="#E50-MJMAIN-3A" x="7746" y="0"></use><g transform="translate(8302,0)"><use xlink:href="#E50-MJMAIN-38"></use><use xlink:href="#E50-MJMAIN-30" x="500" y="0"></use><use xlink:href="#E50-MJMAIN-30" x="1000" y="0"></use><use xlink:href="#E50-MJMAIN-30" x="1500" y="0"></use></g><use xlink:href="#E50-MJMAIN-2F" x="10302" y="0"></use><use xlink:href="#E50-MJMATHI-61" x="10802" y="0"></use><use xlink:href="#E50-MJMATHI-64" x="11331" y="0"></use><use xlink:href="#E50-MJMATHI-6D" x="11854" y="0"></use><use xlink:href="#E50-MJMATHI-69" x="12732" y="0"></use><use xlink:href="#E50-MJMATHI-6E" x="13077" y="0"></use><use xlink:href="#E50-MJMAIN-2F" x="13677" y="0"></use></g></svg></span><script type="math/tex">http://127.0.0.1:8000/admin/ </script>  to manage all the information</p>
+<center class="half">    
+    <img src="../figures/superuser1.png" width="320" align="left">    
+    <img src="../figures/superuser2.png" width="320"> 
+</center>
+<p>&nbsp;</p>
+<div style="page-break-after:always"></div>
+<h5><em><u>How to install</u></em></h5>
+<p><strong>Create a New Virtual Environment and Activate it:</strong></p>
+<pre><code class='language-shell' lang='shell'>conda create -n DjangoPath python=3.7.3
+conda activate DjangoPath
+</code></pre>
+<p><strong>Install Project Dependencies:</strong></p>
+<pre><code class='language-shell' lang='shell'>conda install Django  #install Django
+pip install django-notifications-hq
+pip install django-mdeditor   #blogs are written by markdown language, like csdn
+pip install markdown
+</code></pre>
+<p><strong>Deploy the System:</strong></p>
+<pre><code class='language-shell' lang='shell'>python manage.py makemigrations  #migrate databases, I use sqlite3 database
+python manage.py migrate
+python manage.py runserver 127.0.0.1:8000
+</code></pre>
+<p><strong>Use the Blog:</strong></p>
+<p>       Open your favorite browser, visit the website:  <span class="MathJax_SVG" tabindex="-1" style="font-size: 100%; display: inline-block;"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="15.486ex" height="2.009ex" viewBox="0 -761.8 6667.6 865.1" role="img" focusable="false" style="vertical-align: -0.24ex;"><defs><path stroke-width="0" id="E37-MJMAIN-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path stroke-width="0" id="E37-MJMAIN-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path stroke-width="0" id="E37-MJMAIN-37" d="M55 458Q56 460 72 567L88 674Q88 676 108 676H128V672Q128 662 143 655T195 646T364 644H485V605L417 512Q408 500 387 472T360 435T339 403T319 367T305 330T292 284T284 230T278 162T275 80Q275 66 275 52T274 28V19Q270 2 255 -10T221 -22Q210 -22 200 -19T179 0T168 40Q168 198 265 368Q285 400 349 489L395 552H302Q128 552 119 546Q113 543 108 522T98 479L95 458V455H55V458Z"></path><path stroke-width="0" id="E37-MJMAIN-2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path stroke-width="0" id="E37-MJMAIN-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path stroke-width="0" id="E37-MJMAIN-3A" d="M78 370Q78 394 95 412T138 430Q162 430 180 414T199 371Q199 346 182 328T139 310T96 327T78 370ZM78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path stroke-width="0" id="E37-MJMAIN-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#E37-MJMAIN-31"></use><use xlink:href="#E37-MJMAIN-32" x="500" y="0"></use><use xlink:href="#E37-MJMAIN-37" x="1000" y="0"></use><use xlink:href="#E37-MJMAIN-2E" x="1500" y="0"></use><use xlink:href="#E37-MJMAIN-30" x="1778" y="0"></use><use xlink:href="#E37-MJMAIN-2E" x="2278" y="0"></use><use xlink:href="#E37-MJMAIN-30" x="2556" y="0"></use><use xlink:href="#E37-MJMAIN-2E" x="3056" y="0"></use><use xlink:href="#E37-MJMAIN-31" x="3334" y="0"></use><use xlink:href="#E37-MJMAIN-3A" x="4111" y="0"></use><g transform="translate(4667,0)"><use xlink:href="#E37-MJMAIN-38"></use><use xlink:href="#E37-MJMAIN-30" x="500" y="0"></use><use xlink:href="#E37-MJMAIN-30" x="1000" y="0"></use><use xlink:href="#E37-MJMAIN-30" x="1500" y="0"></use></g></g></svg></span><script type="math/tex">127.0.0.1:8000</script> and enjoy the blog system!</p>
+<p>       Don&#39;t forget to register and login for gaining all functions. </p>
+<p>&nbsp;</p>
+<div style="page-break-after:always"></div>
+<h5><u><em>Project tree</em></u></h5>
+<pre><code>untitled
+├─ untitled
+│  ├─ asgi.py
+│  ├─ settings.py
+│  ├─ urls.py
+│  ├─ views.py
+│  ├─ wsgi.py
+│  ├─ __init__.py
+│  └─ __pycache__
+├─ user
+│  ├─ admin.py
+│  ├─ apps.py
+│  ├─ forms.py
+│  ├─ models.py
+│  ├─ tests.py
+│  ├─ urls.py
+│  ├─ views.py
+│  ├─ __init__.py
+│  ├─ migrations
+│  └─ __pycache__
+├─ blog
+│  ├─ admin.py
+│  ├─ apps.py
+│  ├─ forms.py
+│  ├─ models.py
+│  ├─ tests.py
+│  ├─ urls.py
+│  ├─ views.py
+│  ├─ __init__.py
+│  ├─ migrations
+│  └─ __pycache__
+├─ static
+│  ├─ bootstrap-3.3.7
+│  │  ├─ css
+│  │  ├─ fonts
+│  │  └─ js
+│  ├─ jquery-1.12.4.min.js
+│  ├─ jquery.tinymce.min.js
+│  └─ langs
+├─ templates
+│  ├─ detailblog.html
+│  ├─ home.html
+│  ├─ login.html
+│  ├─ seachblog.html
+│  ├─ updateblog.html
+│  ├─ updatepassword.html
+│  ├─ userblog.html
+│  ├─ userregister.html
+│  └─ writeblog.html
+├─ media
+├─ db.sqlite3
+├─ manage.py
+├─ requirements.txt
+├─ .idea
+├─ .vscode
+└─ __pycache__
+
+</code></pre>
+<div style="page-break-after:always"></div>
+<h4><em>References</em></h4>
+<p>&nbsp;</p>
+<ol>
+<li><p><a href='https://www.tutorialspoint.com/django/django_overview.htm' target='_blank' class='url'>https://www.tutorialspoint.com/django/django_overview.htm</a></p>
+<p>&nbsp;</p>
+</li>
+<li><p><a href='https://blog.csdn.net/qq_40558166/article/details/101106983' target='_blank' class='url'>https://blog.csdn.net/qq_40558166/article/details/101106983</a></p>
+<p>&nbsp;</p>
+</li>
+<li><p><a href='https://blog.csdn.net/qq_40558166/article/details/102741382' target='_blank' class='url'>https://blog.csdn.net/qq_40558166/article/details/102741382</a></p>
+<p>&nbsp;</p>
+</li>
+<li><p><a href='https://code.visualstudio.com/api/extension-guides/tree-view' target='_blank' class='url'>https://code.visualstudio.com/api/extension-guides/tree-view</a></p>
+<p>&nbsp;</p>
+</li>
+<li><p><a href='https://www.codenong.com/43564567/' target='_blank' class='url'>https://www.codenong.com/43564567/</a></p>
+<p>&nbsp;</p>
+</li>
+<li><p><a href='https://www.cnblogs.com/zydeboke/p/11557875.html' target='_blank' class='url'>https://www.cnblogs.com/zydeboke/p/11557875.html</a></p>
+</li>
+
+</ol>
+</body>
+</html>
